@@ -1,57 +1,58 @@
-import React, { useState, useMemo } from "react"
-import { AuthProvider } from "./contexts/AuthContext"
-import { CartProvider } from "./contexts/CartContext"
-import Header from "./components/Header"
-import ProductFilters from "./components/ProductFilters"
-import ProductGrid from "./components/ProductGrid"
-import { useProducts } from "./hooks/useProducts"
+import React, { useState, useMemo } from "react";
+import { AuthProvider } from "./contexts/AuthContext";
+import { CartProvider } from "./contexts/CartContext";
+import Header from "./components/Header";
+import ProductFilters from "./components/ProductFilters";
+import ProductGrid from "./components/ProductGrid";
+import Footer from "./components/Footer";
+import { useProducts } from "./hooks/useProducts";
 
 function AppContent() {
-  const { products, loading, error } = useProducts()
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("")
-  const [sortBy, setSortBy] = useState("")
-  const [priceRange, setPriceRange] = useState([0, 1000])
+  const { products, loading, error } = useProducts();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [sortBy, setSortBy] = useState("");
+  const [priceRange, setPriceRange] = useState([0, 1000]);
 
   // Get unique categories
   const categories = useMemo(() => {
-    return Array.from(new Set(products.map(product => product.category)))
-  }, [products])
+    return Array.from(new Set(products.map((product) => product.category)));
+  }, [products]);
 
   // Filter and sort products
   const filteredAndSortedProducts = useMemo(() => {
-    let filtered = products.filter(product => {
+    let filtered = products.filter((product) => {
       const matchesSearch =
         product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchTerm.toLowerCase())
+        product.description.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory =
-        selectedCategory === "" || product.category === selectedCategory
+        selectedCategory === "" || product.category === selectedCategory;
       const matchesPrice =
-        product.price >= priceRange[0] && product.price <= priceRange[1]
+        product.price >= priceRange[0] && product.price <= priceRange[1];
 
-      return matchesSearch && matchesCategory && matchesPrice
-    })
+      return matchesSearch && matchesCategory && matchesPrice;
+    });
 
     // Sort products
     switch (sortBy) {
       case "price-asc":
-        filtered.sort((a, b) => a.price - b.price)
-        break
+        filtered.sort((a, b) => a.price - b.price);
+        break;
       case "price-desc":
-        filtered.sort((a, b) => b.price - a.price)
-        break
+        filtered.sort((a, b) => b.price - a.price);
+        break;
       case "rating-desc":
-        filtered.sort((a, b) => b.rating.rate - a.rating.rate)
-        break
+        filtered.sort((a, b) => b.rating.rate - a.rating.rate);
+        break;
       case "name-asc":
-        filtered.sort((a, b) => a.title.localeCompare(b.title))
-        break
+        filtered.sort((a, b) => a.title.localeCompare(b.title));
+        break;
       default:
-        break
+        break;
     }
 
-    return filtered
-  }, [products, searchTerm, selectedCategory, sortBy, priceRange])
+    return filtered;
+  }, [products, searchTerm, selectedCategory, sortBy, priceRange]);
 
   if (error) {
     return (
@@ -63,7 +64,7 @@ function AppContent() {
           <div className="text-gray-500">{error}</div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -108,7 +109,7 @@ function AppContent() {
               <div className="lg:hidden">
                 <select
                   value={sortBy}
-                  onChange={e => setSortBy(e.target.value)}
+                  onChange={(e) => setSortBy(e.target.value)}
                   className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">Sort By</option>
@@ -127,8 +128,9 @@ function AppContent() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
-  )
+  );
 }
 
 function App() {
@@ -138,8 +140,7 @@ function App() {
         <AppContent />
       </CartProvider>
     </AuthProvider>
-  )
+  );
 }
 
-export default App
-
+export default App;
